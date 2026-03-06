@@ -1,12 +1,12 @@
--- questo file mi serve per ricostruire la struttura MySQL del progetto Orizon in modo coerente e riutilizzabile.
+-- struttura MySQL 
 
--- mi serve per creare il database solo se non esiste gia.
+-- crea il database solo se non esiste gia
 CREATE DATABASE IF NOT EXISTS orizon CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- mi serve per selezionare il database su cui applicare tutte le tabelle.
+-- mi serve per selezionare il database su cui applicare tutte le tabelle
 USE orizon;
 
--- mi serve per creare la tabella prodotti con nome univoco.
+-- crea la tabella prodotti 
 CREATE TABLE IF NOT EXISTS products (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS products (
   UNIQUE KEY uq_products_name (name)
 ) ENGINE=InnoDB;
 
--- mi serve per creare la tabella utenti con email univoca.
+-- tabella utenti 
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB;
 
--- mi serve per registrare gli ordini e permettere filtro per data inserimento.
+-- registra gli ordini e permette filtro per data inserimento
 CREATE TABLE IF NOT EXISTS orders (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS orders (
   KEY idx_orders_created_at (created_at)
 ) ENGINE=InnoDB;
 
--- mi serve per collegare ordini e prodotti evitando duplicati nello stesso ordine.
+-- mi serve per collegare ordini e prodotti
 CREATE TABLE IF NOT EXISTS order_products (
   order_id INT UNSIGNED NOT NULL,
   product_id INT UNSIGNED NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS order_products (
     ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- mi serve per collegare ordini e utenti evitando duplicati nello stesso ordine.
+-- mi serve per collegare ordini e utenti 
 CREATE TABLE IF NOT EXISTS order_users (
   order_id INT UNSIGNED NOT NULL,
   user_id INT UNSIGNED NOT NULL,

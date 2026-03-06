@@ -1,11 +1,11 @@
 "use strict";
 
-// questo file mi serve per gestire gli errori in modo centralizzato e non ripetere try/catch uguali ovunque.
+// gestione degli errori 
 
 function errorHandler(err, req, res, next) {
   let statusCode = Number.isInteger(err.statusCode) ? err.statusCode : 500;
 
-  // mi serve per mappare errori MySQL comuni in status code coerenti lato API.
+  // mappa errori MySQL 
   if (!Number.isInteger(err.statusCode)) {
     if (err.code === "ER_DUP_ENTRY") {
       statusCode = 409;
@@ -14,10 +14,10 @@ function errorHandler(err, req, res, next) {
     }
   }
 
-  // mi serve per dare un messaggio controllato all'utente senza esporre dettagli interni.
+  // messaggio all'utente 
   const message = statusCode === 500 ? "Errore interno del server" : (err.message || "Errore richiesta");
 
-  // lo uso per restituire una risposta JSON coerente per tutti gli errori.
+  // risposta JSON 
   res.status(statusCode).json({ message });
 }
 

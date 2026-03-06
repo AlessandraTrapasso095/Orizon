@@ -1,4 +1,4 @@
-<!-- questo file mi serve per definire il modello dati del progetto Orizon prima di scrivere CRUD e query SQL, cosi mantengo una base chiara e DRY. -->
+<!-- modello dati del progetto -->
 
 # Modello dati Orizon (Step 5)
 

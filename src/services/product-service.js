@@ -1,15 +1,15 @@
 "use strict";
 
-// questo file mi serve per mettere la logica business dei prodotti separata dalle query SQL e dai controller.
+// logica business dei prodotti 
 
 const productRepository = require("../repositories/product-repository");
 const HttpError = require("../utils/http-error");
 
-// mi serve per convertire e validare l'id da URL in un numero usabile.
+// valida l'id da URL in un numero 
 function parseProductId(rawId) {
   const id = Number(rawId);
 
-  // mi serve per bloccare id non numerici o minori/uguali a zero.
+  // mi serve per bloccare id non numerici o <=0
   if (!Number.isInteger(id) || id <= 0) {
     throw new HttpError(400, "ID prodotto non valido");
   }
@@ -17,11 +17,10 @@ function parseProductId(rawId) {
   return id;
 }
 
-// mi serve per creare il prodotto e prevenire nomi duplicati.
+// mi serve per creare il prodotto e prevenire nomi duplicati
 async function createProduct(payload) {
   const existingProduct = await productRepository.findProductByName(payload.name);
 
-  // lo uso per rispettare il vincolo di unicita in modo chiaro lato API.
   if (existingProduct) {
     throw new HttpError(409, "Esiste gia un prodotto con questo nome");
   }
@@ -30,7 +29,7 @@ async function createProduct(payload) {
   return productRepository.findProductById(newId);
 }
 
-// mi serve per aggiornare un prodotto esistente con controllo duplicati.
+// aggiorna un prodotto esistente
 async function updateProduct(rawId, payload) {
   const id = parseProductId(rawId);
 
@@ -48,7 +47,7 @@ async function updateProduct(rawId, payload) {
   return productRepository.findProductById(id);
 }
 
-// mi serve per cancellare un prodotto e segnalare se non esiste.
+// mi serve per cancellare un prodotto e segnalare se non esiste
 async function removeProduct(rawId) {
   const id = parseProductId(rawId);
   const affectedRows = await productRepository.deleteProduct(id);

@@ -1,12 +1,12 @@
 "use strict";
 
-// questo file mi serve per ricevere richieste HTTP utenti e applicare validazione + service logic.
+// richieste HTTP utenti e validazione + service logic
 
 const userService = require("../services/user-service");
 const HttpError = require("../utils/http-error");
 const { validateUserPayload } = require("../utils/validators/user-validator");
 
-// mi serve per creare un utente rispettando i vincoli del dominio.
+// crea un utente 
 async function createUser(req, res, next) {
   try {
     const validation = validateUserPayload(req.body);
@@ -21,7 +21,7 @@ async function createUser(req, res, next) {
   }
 }
 
-// mi serve per aggiornare l'anagrafica utente.
+// aggiorna l'anagrafica utente
 async function updateUser(req, res, next) {
   try {
     const validation = validateUserPayload(req.body);
@@ -36,7 +36,7 @@ async function updateUser(req, res, next) {
   }
 }
 
-// mi serve per eliminare un utente restituendo 204 in caso di successo.
+// elimina un utente restituendo 204 in caso di successo
 async function deleteUser(req, res, next) {
   try {
     await userService.removeUser(req.params.id);

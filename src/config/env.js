@@ -1,12 +1,12 @@
 "use strict";
 
-// questo file mi serve per leggere e validare le variabili ambiente una sola volta, cosi evito duplicazioni nel progetto.
+// serve per leggere e validare le variabili ambiente 
 
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-// mi serve per centralizzare i valori di configurazione usati dal backend.
+// mi serve per centralizzare i valori di configurazione usati dal backend
 const env = {
   port: Number(process.env.PORT) || 3000,
   dbHost: process.env.DB_HOST || "127.0.0.1",

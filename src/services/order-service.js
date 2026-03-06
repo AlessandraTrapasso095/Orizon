@@ -1,16 +1,16 @@
 "use strict";
 
-// questo file mi serve per orchestrare la logica business ordini (transazioni, controlli e relazioni) senza duplicazioni nei controller.
+// logica business ordini (transazioni, controlli e relazioni) 
 
 const db = require("../config/database");
 const orderRepository = require("../repositories/order-repository");
 const HttpError = require("../utils/http-error");
 
-// mi serve per validare l'id ordine ricevuto da URL.
+// id ordine ricevuto da URL
 function parseOrderId(rawId) {
   const id = Number(rawId);
 
-  // mi serve per bloccare id non validi prima di toccare il database.
+  // blocca id non validi prima di toccare il database
   if (!Number.isInteger(id) || id <= 0) {
     throw new HttpError(400, "ID ordine non valido");
   }
@@ -18,13 +18,13 @@ function parseOrderId(rawId) {
   return id;
 }
 
-// mi serve per eliminare duplicati nelle liste id e mantenere un formato coerente.
+// elimina duplicati nelle liste id 
 function normalizeUniqueIds(ids) {
-  // lo uso per creare un elenco di interi unici in ordine di inserimento.
+  // lo uso per creare un elenco di interi 
   return [...new Set(ids.map((id) => Number(id)))];
 }
 
-// mi serve per verificare che tutti gli id prodotto e utente esistano davvero.
+// verifico se tutti gli id prodotto e utente esistano 
 async function assertLinkedEntitiesExist(productIds, userIds) {
   const totalProducts = await orderRepository.countProductsByIds(productIds);
   if (totalProducts !== productIds.length) {
@@ -37,7 +37,7 @@ async function assertLinkedEntitiesExist(productIds, userIds) {
   }
 }
 
-// mi serve per comporre una risposta ordine completa di prodotti e utenti collegati.
+// risposta ordine completa di prodotti e utenti collegati
 async function buildOrderResponse(orderId) {
   const order = await orderRepository.findOrderById(orderId);
   const products = await orderRepository.listOrderProducts(orderId);
@@ -50,7 +50,7 @@ async function buildOrderResponse(orderId) {
   };
 }
 
-// mi serve per creare un ordine con tutte le associazioni in transazione atomica.
+// crea un ordine con tutte le associazioni 
 async function createOrder(payload) {
   const productIds = normalizeUniqueIds(payload.productIds);
   const userIds = normalizeUniqueIds(payload.userIds);
@@ -60,7 +60,7 @@ async function createOrder(payload) {
   const connection = await db.pool.getConnection();
 
   try {
-    // mi serve per garantire che inserimento ordine e associazioni vadano a buon fine insieme.
+    // vedo se inserimento ordine e associazioni vadano a buon fine 
     await connection.beginTransaction();
 
     const orderId = await orderRepository.createOrder(connection);
@@ -70,7 +70,7 @@ async function createOrder(payload) {
     await connection.commit();
     return buildOrderResponse(orderId);
   } catch (error) {
-    // lo uso per annullare modifiche parziali in caso di errore.
+    // lo uso per annullare modifiche parziali in caso di errore
     await connection.rollback();
     throw error;
   } finally {
@@ -78,7 +78,7 @@ async function createOrder(payload) {
   }
 }
 
-// mi serve per aggiornare le associazioni ordine in una singola transazione.
+// mi serve per aggiornare le associazioni ordine 
 async function updateOrder(rawId, payload) {
   const orderId = parseOrderId(rawId);
   const productIds = normalizeUniqueIds(payload.productIds);
@@ -94,7 +94,7 @@ async function updateOrder(rawId, payload) {
   const connection = await db.pool.getConnection();
 
   try {
-    // mi serve per sostituire tutte le associazioni ordine senza lasciare stato intermedio incoerente.
+    // sostituisce tutte le associazioni ordine 
     await connection.beginTransaction();
 
     await orderRepository.removeOrderProducts(connection, orderId);
@@ -106,7 +106,7 @@ async function updateOrder(rawId, payload) {
     await connection.commit();
     return buildOrderResponse(orderId);
   } catch (error) {
-    // mi serve per ripristinare lo stato precedente se qualcosa fallisce.
+    // ripristina lo stato precedente se qualcosa fallisce
     await connection.rollback();
     throw error;
   } finally {
@@ -114,7 +114,7 @@ async function updateOrder(rawId, payload) {
   }
 }
 
-// mi serve per cancellare un ordine e restituire 404 se non esiste.
+// cancella un ordine e restituire 404 se non esiste
 async function removeOrder(rawId) {
   const orderId = parseOrderId(rawId);
   const affectedRows = await orderRepository.deleteOrder(orderId);
@@ -124,7 +124,7 @@ async function removeOrder(rawId) {
   }
 }
 
-// mi serve per normalizzare e validare i filtri query prima di passarli al repository.
+// filtri query prima 
 function normalizeFilters(filters) {
   const normalized = {};
 
@@ -133,21 +133,21 @@ function normalizeFilters(filters) {
   }
 
   if (filters.productId !== undefined) {
-    // mi serve per trasformare il filtro productId in numero intero.
+    // mi serve per trasformare il filtro productId in numero intero
     normalized.productId = Number(filters.productId);
   }
 
   return normalized;
 }
 
-// mi serve per ottenere la lista ordini con dettagli completi e filtri opzionali.
+// mi serve per ottenere la lista ordini con dettagli
 async function listOrders(filters = {}) {
   const normalizedFilters = normalizeFilters(filters);
 
-  // mi serve per ottenere gli ordini base dal repository con i filtri richiesti.
+  // per ottenere gli ordini base dal repository con i filtri richiesti
   const orders = await orderRepository.listOrders(normalizedFilters);
 
-  // mi serve per arricchire ogni ordine con prodotti e utenti in parallelo.
+  // per arricchire ogni ordine con prodotti e utenti
   const enrichedOrders = await Promise.all(
     orders.map(async (order) => {
       const products = await orderRepository.listOrderProducts(order.id);

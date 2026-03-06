@@ -1,12 +1,12 @@
 "use strict";
 
-// questo file mi serve per gestire le richieste HTTP sugli ordini delegando validazione e business logic ai livelli dedicati.
+// gestione richieste HTTP sugli ordini 
 
 const orderService = require("../services/order-service");
 const HttpError = require("../utils/http-error");
 const { validateOrderPayload, validateOrderFilters } = require("../utils/validators/order-validator");
 
-// mi serve per creare un ordine con risposta REST 201.
+// crea un ordine con risposta REST 201
 async function createOrder(req, res, next) {
   try {
     const validation = validateOrderPayload(req.body);
@@ -21,7 +21,7 @@ async function createOrder(req, res, next) {
   }
 }
 
-// mi serve per aggiornare le associazioni di un ordine esistente.
+// aggiorna le associazioni di un ordine esistente
 async function updateOrder(req, res, next) {
   try {
     const validation = validateOrderPayload(req.body);
@@ -36,7 +36,7 @@ async function updateOrder(req, res, next) {
   }
 }
 
-// mi serve per cancellare un ordine e rispondere 204 in caso di successo.
+// cancella un ordine e risponde 204 in caso di successo
 async function deleteOrder(req, res, next) {
   try {
     await orderService.removeOrder(req.params.id);
@@ -46,7 +46,7 @@ async function deleteOrder(req, res, next) {
   }
 }
 
-// mi serve per leggere tutti gli ordini con filtri opzionali su data e prodotto.
+// mi serve per leggere tutti gli ordini con filtri opzionali su data e prodotto
 async function listOrders(req, res, next) {
   try {
     const validation = validateOrderFilters(req.query);

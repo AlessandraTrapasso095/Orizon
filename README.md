@@ -1,6 +1,4 @@
-<!-- questo file mi serve per spiegare come avviare, usare e testare il progetto API Orizon in locale. -->
-
-# Orizon API - REST JSON con Node.js + Express + MySQL
+# Orizon API 
 
 Backend RESTful per la gestione di prodotti, utenti e ordini con filtri sugli ordini per data e prodotto.
 
@@ -171,3 +169,8 @@ tests/
   api/
   services/
 ```
+
+## Github
+- 
+
+## Autrice: Alessandra Trapasso 👩
