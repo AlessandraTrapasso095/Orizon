@@ -171,6 +171,6 @@ tests/
 ```
 
 ## Github
-- 
+- GitHub Repository: `https://github.com/AlessandraTrapasso095/Orizon.git`
 
 ## Autrice: Alessandra Trapasso 👩
